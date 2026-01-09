@@ -1,3 +1,6 @@
+// App.tsx
+
+// import de pacotes
 import { NavigationContainer } from '@react-navigation/native';
 import { AppRoutes } from '@/navigation/index';
 import { StatusBar } from 'expo-status-bar';

@@ -1,3 +1,6 @@
+// src\navigation\index.tsx
+
+// import de pacotes
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
