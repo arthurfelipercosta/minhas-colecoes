@@ -14,6 +14,7 @@ export interface Carro {
     // Checkboxes
     isNewModel: boolean;
     isCustom: boolean;
+    rarity: 'normal' | 'regular' | 'super';
     hasRubberTires: boolean;
     isForSale: boolean;
 
