@@ -1,34 +1,146 @@
+// src\screens\add.tsx
+// import de pacotes
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, Text, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
+import Toast from 'react-native-toast-message';
 
+// import de arquivos
 import { Input } from '@/components/Input';
 import { Checkbox } from '@/components/Checkbox';
+import { YearStepper } from '@/components/YearStepper';
 import { CustomDropdown } from '@/components/Dropdown';
 import { RarityCheckbox } from '@/components/RarityCheckbox';
+import { ActionModal } from '@/components/ActionModal';
 import { Carro } from '@/config/carro';
-import { MARCAS, PAISES, FABRICANTES, SERIES, COLECOES } from '@/config/data';
+import { MARCAS, PAISES, FABRICANTES, SERIES, COLECOES, CONTADORANUAL, RARIDADES, SIMPLECOLOR } from '@/config/data';
+
+
+const getAnosDisponiveis = (): { label: string; value: string }[] => {
+    const anoAtual = new Date().getFullYear();
+    const anos: { label: string; value: string }[] = [];
+
+    for (let ano = anoAtual; ano >= 1968; ano--) {
+        anos.push({
+            label: ano.toString(),
+            value: ano.toString()
+        });
+    }
+    return anos;
+}
+
+const getTotalAno = (ano: string | number | undefined): string => {
+    if (!ano) return '----';
+
+    const anoStr = ano.toString();
+    const encontrado = CONTADORANUAL.find(item => item.label === anoStr);
+
+    return encontrado ? encontrado.value : '----';
+}
 
 export default function AddScreen() {
+
+    const navigation = useNavigation();
     // Inicializa como um objeto vazio mas tipado como Carro (ou Partial<Carro>)
     const [carro, setCarro] = useState<Partial<Carro>>({});
+    const [isModalVisible, setIsModalVisible] = useState(false); // Estado para o modal
 
     const selectBrand = FABRICANTES.find(item => item.value === carro?.marca);
     const selectCountry = PAISES.find(item => item.label === carro?.country || item.value === carro?.country);
+    const selectMarcas = MARCAS.find(item => item.label === carro?.brand || item.value === carro?.brand);
+    const selectSeries = SERIES.find(item => item.label === carro.serieName || item.value === carro.serieName);
 
-    const defaultImage = require('@/assets/manufacturers/none.png');
+    const defaultMontadora = require('@/assets/manufacturers/none.png');
+    const defaultBrand = require('@/assets/brands/none.png');
     const defaultFlag = require('@/assets/flags/none.png');
+    const defaultMarcas = require('@/assets/brands/none.png');
     const defaultSeries = require('@/assets/series/none.png');
+    const defaultCollection = require('@/assets/collections/none.png');
+
+    // Função para abrir Galeria
+    const handleGallery = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Toast.show({ type: 'error', text1: 'Sem acesso à galeria 📷' });
+            return;
+        }
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'], allowsEditing: true, aspect: [1, 1], quality: 0.7,
+        });
+        if (!result.canceled) setCarro({ ...carro, imageUri: result.assets[0].uri });
+    };
+
+    // Função para abrir Câmera
+    const handleCamera = async () => {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+            Toast.show({ type: 'error', text1: 'Sem acesso à câmera 📸' });
+            return;
+        }
+        let result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true, aspect: [1, 1], quality: 0.7,
+        });
+        if (!result.canceled) setCarro({ ...carro, imageUri: result.assets[0].uri });
+    };
+
 
     const handleSave = () => {
         console.log('Dados preenchidos:', carro);
     };
 
+    const pickImage = async () => {
+        try {
+            // 1. Pedir permissão para acessar a galeria
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+            if (status !== 'granted') {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Permissão negada',
+                    text2: 'Precisamos acessar suas fotos para carregar a imagem 📷',
+                    position: 'bottom'
+                });
+                return;
+            }
+
+            // 2. Abrir a galeria do celular
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ['images'],
+                allowsEditing: true, // Permite cortar a foto
+                aspect: [1, 1],      // Força um quadrado (bom para catálogo)
+                quality: 0.8,        // Comprime um pouco para não pesar no banco
+            });
+
+            // 3. Se o usuário não cancelou
+            if (!result.canceled) {
+                const uri = result.assets[0].uri;
+                setCarro({ ...carro, imageUri: uri });
+
+                Toast.show({
+                    type: 'success',
+                    text1: 'Imagem carregada!',
+                    text2: 'Ficou show! 🏎️✨',
+                    position: 'bottom',
+                    visibilityTime: 2000 // Some mais rápido (2 segundos)
+                });
+            }
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Erro ao carregar',
+                text2: 'Não conseguimos abrir suas fotos no momento.',
+                position: 'bottom'
+            });
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={() => { }}>
+                <TouchableOpacity onPress={() => { navigation.navigate('GARAGEM' as never) }}>
                     <View style={styles.backButton}>
                         <Ionicons name="chevron-back" size={24} color="#E31C1C" />
                         <Text style={styles.backText}>Voltar</Text>
@@ -41,16 +153,23 @@ export default function AddScreen() {
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
 
-                <TouchableOpacity style={styles.imagePicker}>
-                    <Ionicons name="camera" size={50} color="#444" />
+                <TouchableOpacity style={styles.imagePicker} onPress={() => setIsModalVisible(true)} activeOpacity={0.7}>
+                    {carro?.imageUri ? (
+                        <Image
+                            source={{ uri: carro.imageUri }}
+                            style={{ width: '100%', height: '100%', borderRadius: 15 }}
+                        />
+                    ) : (
+                        <Ionicons name="camera" size={50} color="#444" />
+                    )}
                 </TouchableOpacity>
 
-                {/* MARCA DO VEÍCULO (80% para o Dropdown / 20% para a Imagem) */}
+                {/* MONTADORA (80% para o Dropdown / 20% para a Imagem) */}
                 <View style={styles.row}>
                     {/* Coluna do Dropdown ocupando 80% (flex: 4) */}
                     <View style={{ flex: 3, marginRight: 10 }}>
                         <CustomDropdown
-                            placeholder="Marca do Veículo"
+                            placeholder="Montadora"
                             data={FABRICANTES}
                             value={carro?.marca || null}
                             onChange={(val) => {
@@ -67,7 +186,7 @@ export default function AddScreen() {
 
                     {/* Coluna do Logo ocupando 20% (flex: 1) */}
                     <View style={[styles.brandLogoContainer, { marginRight: 10 }]}>
-                        <Image source={selectBrand?.image || defaultImage} style={styles.brandLogo} />
+                        <Image source={selectBrand?.image || defaultMontadora} style={styles.brandLogo} />
                     </View>
                     {/* Coluna do Logo ocupando 20% (flex: 1) */}
                     <View style={styles.brandLogoContainer}>
@@ -81,45 +200,88 @@ export default function AddScreen() {
                     onChangeText={(val) => setCarro({ ...carro, modelo: val })}
                 />
 
+                {/* MARCA DO BRINQUEDO (Hot Wheels, Matchbox) */}
                 <View style={styles.row}>
-                    <View style={{ flex: 1.5, marginRight: 10 }}>
+                    <View style={{ flex: 0.6, marginRight: 10 }}>
+                        <CustomDropdown
+                            placeholder="Fabricante (Ex: Hot Wheels)"
+                            data={MARCAS}
+                            value={carro?.brand || null}
+                            onChange={(val) => setCarro({ ...carro, brand: val })}
+                        />
+                    </View>
+                    {/* Coluna do Logo ocupando 20% (flex: 1) */}
+                    <View style={[styles.brandLogoContainer, { flex: 0.4 }]}>
+                        <Image source={selectMarcas?.image || defaultBrand} style={styles.brandLogo} />
+                    </View>
+                </View>
+
+                {/* SÉRIE DO BRINQUEDO (Boulevard, Car Culture, Mainline, etc) */}
+                <View style={styles.row}>
+                    <View style={{ flex: 0.6, marginRight: 10 }}>
+                        <CustomDropdown
+                            placeholder="Série"
+                            data={SERIES}
+                            value={carro?.serieName || null}
+                            onChange={(val) => setCarro({ ...carro, serieName: val })}
+                        />
+                    </View>
+                    {/* Coluna do Logo ocupando 20% (flex: 1) */}
+                    <View style={[styles.brandLogoContainer, { flex: 0.4 }]}>
+                        <Image source={selectSeries?.image || defaultSeries} style={styles.brandLogo} />
+                    </View>
+                </View>
+                <View style={styles.row}>
+                    <View style={{ flex: 1, marginRight: 10 }}>
                         <Input
-                            label="Código"
+                            label="Código SKU"
                             value={carro?.code}
                             onChangeText={(val) => setCarro({ ...carro, code: val })}
                         />
                     </View>
-                    <View style={{ flex: 1, marginRight: 10 }}>
-                        <Input
-                            label="Ano"
-                            keyboardType="numeric"
-                            value={carro?.year?.toString()}
-                            onChangeText={(val) => setCarro({ ...carro, year: Number(val) })}
+                    <View style={{ flex: 1 }}>
+                        <YearStepper
+                            value={carro?.year}
+                            onChange={(val) => setCarro({ ...carro, year: val })}
                         />
                     </View>
-                    <View style={{ flex: 1 }}>
+                </View>
+                <View style={[styles.row, { alignItems: 'center' }]}>
+                    <View style={{ flex: 0.5 }}>
                         <Input
-                            label="Nº Série"
+                            label="Nº"
                             value={carro?.numberSerie}
                             onChangeText={(val) => setCarro({ ...carro, numberSerie: val })}
                         />
                     </View>
+                    <View style={styles.slashContainer}>
+                        <Text style={styles.slash}>/</Text>
+                    </View>
+                    <View style={{ flex: 0.75, marginRight: 10 }}>
+                        <Input
+                            label="Total"
+                            value={carro?.totalSerie}
+                            onChangeText={(val) => setCarro({ ...carro, totalSerie: val })}
+                        />
+                    </View>
+                    {/* </View>
+                <View style={[styles.row, { alignItems: 'center' }]}> */}
+                    <View style={{ flex: 0.8 }}>
+                        <Input
+                            label="Nº no ano"
+                            value={carro?.numberYear}
+                            onChangeText={(val) => setCarro({ ...carro, numberYear: val })}
+                        />
+                    </View>
+                    <View style={styles.slashContainer}>
+                        <Text style={styles.slash}>/</Text>
+                    </View>
+                    <View style={{ flex: 0.45, justifyContent: 'center' }}>
+                        <Text style={styles.totalLabelBold}>
+                            {carro?.year ? getTotalAno(carro.year) : '----'}
+                        </Text>
+                    </View>
                 </View>
-
-                {/* MARCA DO BRINQUEDO (Hot Wheels, Matchbox) */}
-                <CustomDropdown
-                    placeholder="Fabricante (Ex: Hot Wheels)"
-                    data={MARCAS}
-                    value={carro?.brand || null}
-                    onChange={(val) => setCarro({ ...carro, brand: val })}
-                />
-
-                <CustomDropdown
-                    placeholder="Série"
-                    data={SERIES}
-                    value={carro?.serieName || null}
-                    onChange={(val) => setCarro({ ...carro, serieName: val })}
-                />
 
                 <View style={styles.checkboxContainer}>
                     <Checkbox
@@ -138,32 +300,26 @@ export default function AddScreen() {
                         onChange={(val) => setCarro({ ...carro, rarity: val })}
                     />
                     <Checkbox
-                        label="À venda"
-                        value={!!carro?.isForSale}
-                        onChange={(v) => setCarro({ ...carro, isForSale: v })}
-                    />
-                    <Checkbox
                         label="Pneu de borracha"
                         value={!!carro?.hasRubberTires}
                         onChange={(v) => setCarro({ ...carro, hasRubberTires: v })}
                     />
-                </View>
-
-                <View style={styles.row}>
-                    <Input
-                        label="Preço Compra"
-                        keyboardType="numeric"
-                        onChangeText={(val) => setCarro({ ...carro, buyPrice: Number(val) })}
-                    />
-                    <Input
-                        label="Preço Venda"
-                        keyboardType="numeric"
-                        onChangeText={(val) => setCarro({ ...carro, sellPrice: Number(val) })}
+                    <Checkbox
+                        label="À venda"
+                        value={!!carro?.isForSale}
+                        onChange={(v) => setCarro({ ...carro, isForSale: v })}
                     />
                 </View>
-
-                <View style={{ height: 100 }} />
             </ScrollView>
+            {/* O Modal de Escolha no final do JSX */}
+            <ActionModal
+                visible={isModalVisible}
+                onClose={() => setIsModalVisible(false)}
+                options={[
+                    { label: 'Tirar Foto', icon: 'camera', onPress: handleCamera },
+                    { label: 'Escolher da Galeria', icon: 'images', onPress: handleGallery },
+                ]}
+            />
         </SafeAreaView>
     );
 }
@@ -191,5 +347,48 @@ const styles = StyleSheet.create({
         width: '80%',
         height: '80%',
         resizeMode: 'contain',
+    },
+    slashContainer: {
+        height: 45, // Mesma altura dos Inputs
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 5,
+    },
+    slash: {
+        color: '#FFF',
+        fontSize: 22,
+        lineHeight: 22, // Força a linha a ter a mesma altura da fonte
+        includeFontPadding: false, // Remove padding extra do Android
+    },
+    stepperContainer: {
+        backgroundColor: '#222',
+        borderRadius: 8,
+        height: 45,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+    },
+    stepperLabel: {
+        color: '#666',
+        fontSize: 12,
+    },
+    stepperControls: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+    },
+    stepperValue: {
+        color: '#FFF',
+        fontSize: 16,
+        fontWeight: 'bold',
+        minWidth: 45,
+        textAlign: 'center',
+    },
+    totalLabelBold: {
+        color: '#FFF',
+        fontSize: 18,
+        fontWeight: 'bold',
+        paddingLeft: 5,
     },
 });
