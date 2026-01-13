@@ -15,6 +15,15 @@
     "ios": {
       "supportsTablet": true
     },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O app precisa acessar suas fotos para você catalogar seus carrinhos.",
+          "cameraPermission": "O app precisa da câmera para você tirar fotos dos seus carrinhos."
+        }
+      ]
+    ],
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
