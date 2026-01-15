@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,11 +8,12 @@ interface Props {
     placeholder: string;
     data: { label: string; value: string }[];
     value: string | null;
+    error?: boolean;
     onChange: (value: string) => void;
     onAddNew?: (text: string) => void; // Função opcional para quando cadastrar novo
 }
 
-export const CustomDropdown = ({ placeholder, data, value, onChange, onAddNew }: Props) => {
+export const CustomDropdown = ({ placeholder, data, value, error, onChange, onAddNew }: Props) => {
     const [localData, setLocalData] = useState(data);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -25,9 +26,16 @@ export const CustomDropdown = ({ placeholder, data, value, onChange, onAddNew }:
         if (onAddNew) onAddNew(text);
     };
 
+    useEffect(() => {
+        setLocalData(data);
+    }, [data]);
+
     return (
         <Dropdown
-            style={styles.dropdown}
+            style={[
+                styles.dropdown,
+                error && { borderColor: '#E31C1C', borderWidth: 1 }
+            ]}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
             inputSearchStyle={styles.inputSearchStyle}

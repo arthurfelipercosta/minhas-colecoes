@@ -98,28 +98,32 @@ export const PAISES: ListItem[] = [
 ];
 
 export const COLECOES: ListItem[] = [
+    { label: 'Exotics', value: 'exotics', image: require('@/assets/collections/exotics.png') },
     { label: 'Factory Fresh', value: 'factoryfresh', image: require('@/assets/collections/factoryfresh.png') },
+    { label: 'Fast Foodie', value: 'fast-foodie', image: require('@/assets/collections/fast-foodie.png') },
     { label: 'Green Speed', value: 'greenspeed', image: require('@/assets/collections/greenspeed.png') },
     { label: 'J-Imports', value: 'j-imports', image: require('@/assets/collections/j-imports.png') },
+    { label: 'ID', value: 'id', image: require('@/assets/collections/id.png') },
     { label: 'Muscle Mania', value: 'musclemania', image: require('@/assets/collections/musclemania.png') },
     { label: 'Nightburnerz', value: 'nightburnerz', image: require('@/assets/collections/nightburnerz.png') },
     { label: 'Screen Time', value: 'screentime', image: require('@/assets/collections/screentime.png') },
+    { label: 'Silver', value: 'silver', image: require('@/assets/collections/silver.png') },
     { label: 'Speed Graphics', value: 'speedgraphics', image: require('@/assets/collections/speedgraphics.png') },
     { label: 'Then and Now', value: 'thenandnow', image: require('@/assets/collections/thenandnow.png') },
 ];
 
-export const SERIES: ListItem[] = [
-    { label: 'Boulevard', value: 'boulevard', image: require('@/assets/series/boulevard.png') },
-    { label: 'Car Culture', value: 'car-culture', image: require('@/assets/series/car-culture.png') },
-    { label: 'Elite 64', value: 'elite64', image: require('@/assets/series/elite64.png') },
-    { label: 'Fast Foodie', value: 'fast-foodie', image: require('@/assets/series/fast-foodie.png') },
-    // { label: 'Mainline', value: 'mainline', image: require('@/assets/series/mainline.png') },
-    { label: 'Nightburnerz', value: 'nightburnerz', image: require('@/assets/series/nightburnerz.png') },
-    { label: 'Pop Culture', value: 'pop-culture', image: require('@/assets/series/pop-culture.png') },
-    { label: 'Premium', value: 'premium', image: require('@/assets/series/premium.png') },
-    { label: 'RLC', value: 'rlc', image: require('@/assets/series/rlc.png') },
-    { label: 'Silver', value: 'silver', image: require('@/assets/series/silver.png') },
+export const PREMIUM: ListItem[] = [
+    { label: 'Boulevard', value: 'boulevard', image: require('@/assets/premium/boulevard.png') },
+    { label: 'Car Culture', value: 'car-culture', image: require('@/assets/premium/car-culture.png') },
+    { label: 'Elite 64', value: 'elite64', image: require('@/assets/premium/elite64.png') },
+    { label: 'ID', value: 'id', image: require('@/assets/collections/id.png') },
+    { label: 'Pop Culture', value: 'pop-culture', image: require('@/assets/premium/pop-culture.png') },
+    { label: 'RLC', value: 'rlc', image: require('@/assets/premium/rlc.png') },
 ];
+export const SERIES: ListItem[] = [
+    { label: 'Mainline', value: 'mainline', image: require('@/assets/series/mainline.png') },
+    { label: 'Premium', value: 'premium', image: require('@/assets/series/premium.png') },
+]
 
 export const CONTADORANUAL: ListItem[] = [
     { label: '2026', value: '250' },
@@ -152,15 +156,15 @@ export const CONTADORANUAL: ListItem[] = [
 ]
 
 export const SIMPLECOLOR: ListItem[] = [
-    { label: 'azul', value: '#0000FF' },
-    { label: 'amarelo', value: '#FFFF00' },
-    { label: 'branco', value: '#FFFFFF' },
-    { label: 'cinza', value: '#C0C0C0' },
-    { label: 'laranja', value: '#FFA500' },
-    { label: 'preto', value: '#000000' },
-    { label: 'rosa', value: '#FFC0C0' },
-    { label: 'roxo', value: '#A020F0' },
-    { label: 'verde', value: '#00FF00' },
-    { label: 'vermelho', value: '#FF0000' },
-    { label: 'vinho', value: '#B03060' }
+    { label: 'Azul', value: '#0000FF' },
+    { label: 'Amarelo', value: '#FFFF00' },
+    { label: 'Branco', value: '#FFFFFF' },
+    { label: 'Cinza', value: '#C0C0C0' },
+    { label: 'Laranja', value: '#FF8300' },
+    { label: 'Preto', value: '#000000' },
+    { label: 'Rosa', value: '#FF48A5' },
+    { label: 'Roxo', value: '#A020F0' },
+    { label: 'Verde', value: '#00FF00' },
+    { label: 'Vermelho', value: '#FF0000' },
+    { label: 'Vinho', value: '#9C2B48' }
 ]

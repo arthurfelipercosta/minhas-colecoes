@@ -7,12 +7,16 @@ import { View, Text, TextInput, StyleSheet, TextInputProps } from 'react-native'
 interface InputProps extends TextInputProps {
     label: string;
     rightIcon?: React.ReactNode;
+    error?: boolean;
 }
 
-export const Input = ({ label, rightIcon, ...props }: InputProps) => {
+export const Input = ({ label, rightIcon, error, ...props }: InputProps) => {
     return (
-        <View style={styles.container}>
-            <View style={styles.inputWrapper}>
+        <View style={[styles.container, props.style]}>
+            <View style={[
+                styles.inputWrapper,
+                error && { borderColor: '#E31C1C', borderWidth: 1 }
+            ]}>
                 <TextInput
                     style={styles.input}
                     placeholder={label}

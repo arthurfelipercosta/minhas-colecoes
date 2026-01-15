@@ -16,7 +16,7 @@ import { CustomDropdown } from '@/components/Dropdown';
 import { RarityCheckbox } from '@/components/RarityCheckbox';
 import { ActionModal } from '@/components/ActionModal';
 import { Carro } from '@/config/carro';
-import { MARCAS, PAISES, FABRICANTES, SERIES, COLECOES, CONTADORANUAL, RARIDADES, SIMPLECOLOR } from '@/config/data';
+import { MARCAS, PAISES, FABRICANTES, SERIES, PREMIUM, COLECOES, CONTADORANUAL, SIMPLECOLOR } from '@/config/data';
 
 
 const getAnosDisponiveis = (): { label: string; value: string }[] => {
@@ -45,13 +45,18 @@ export default function AddScreen() {
 
     const navigation = useNavigation();
     // Inicializa como um objeto vazio mas tipado como Carro (ou Partial<Carro>)
-    const [carro, setCarro] = useState<Partial<Carro>>({});
+    const [carro, setCarro] = useState<Partial<Carro>>({ year: new Date().getFullYear() });
+    const [errors, setErrors] = useState<string[]>([]);
     const [isModalVisible, setIsModalVisible] = useState(false); // Estado para o modal
+
+    const detailList = carro?.type === 'mainline' ? COLECOES :
+        carro?.type === 'premium' ? PREMIUM : [];
 
     const selectBrand = FABRICANTES.find(item => item.value === carro?.marca);
     const selectCountry = PAISES.find(item => item.label === carro?.country || item.value === carro?.country);
     const selectMarcas = MARCAS.find(item => item.label === carro?.brand || item.value === carro?.brand);
-    const selectSeries = SERIES.find(item => item.label === carro.serieName || item.value === carro.serieName);
+    const selectSeries = SERIES.find(item => item.label === carro.serieName || item.value === carro.type);
+    const selectDetails = detailList.find(item => item.value === carro?.serieName);
 
     const defaultMontadora = require('@/assets/manufacturers/none.png');
     const defaultBrand = require('@/assets/brands/none.png');
@@ -59,6 +64,7 @@ export default function AddScreen() {
     const defaultMarcas = require('@/assets/brands/none.png');
     const defaultSeries = require('@/assets/series/none.png');
     const defaultCollection = require('@/assets/collections/none.png');
+    const defaultType = require('@/assets/series/none.png');
 
     // Função para abrir Galeria
     const handleGallery = async () => {
@@ -88,6 +94,28 @@ export default function AddScreen() {
 
 
     const handleSave = () => {
+        const mandatoryFields = ['marca', 'modelo', 'brand', 'year'];
+        const newErrors: string[] = [];
+
+        mandatoryFields.forEach(field => {
+            if (!carro[field as keyof Carro]) {
+                newErrors.push(field);
+            }
+        });
+
+        if (newErrors.length > 0) {
+            setErrors(newErrors);
+            Toast.show({
+                type: 'error',
+                text1: 'Campos faltando',
+                text2: 'Preencha os campos marcados em vermelho 🚩',
+                position: 'bottom'
+            });
+            return;
+        }
+
+        setErrors([]);
+
         console.log('Dados preenchidos:', carro);
     };
 
@@ -217,18 +245,61 @@ export default function AddScreen() {
                 </View>
 
                 {/* SÉRIE DO BRINQUEDO (Boulevard, Car Culture, Mainline, etc) */}
-                <View style={styles.row}>
-                    <View style={{ flex: 0.6, marginRight: 10 }}>
+                {carro?.brand === 'hot-wheels' && (
+                    <>
+                        {/* DROPDOWN 1: TIPO (Mainline ou Premium) */}
+                        <View style={styles.row}>
+                            <View style={{ flex: 0.6, marginRight: 10 }}>
+                                <CustomDropdown
+                                    placeholder="Tipo"
+                                    data={SERIES} // Esta lista deve conter Mainline e Premium
+                                    value={carro?.type || null}
+                                    onChange={(val: any) => setCarro({ ...carro, type: val, serieName: undefined })}
+                                />
+                            </View>
+                            <View style={[styles.brandLogoContainer, { flex: 0.4 }]}>
+                                {/* Mostra o logo da Mainline ou Premium */}
+                                <Image source={selectSeries?.image || defaultSeries} style={styles.brandLogo} />
+                            </View>
+                        </View>
+
+                        {/* DETALHE (Só aparece se o Tipo foi escolhido) */}
+                        {carro?.type && (
+                            <View style={styles.row}>
+                                <View style={{ flex: 0.6, marginRight: 10 }}>
+                                    <CustomDropdown
+                                        placeholder={carro.type === 'premium' ? "Séries Premium" : "Coleção Mainline"}
+                                        data={detailList}
+                                        value={carro?.serieName || null}
+                                        onChange={(val) => setCarro({ ...carro, serieName: val })}
+                                    />
+                                </View>
+                                <View style={[styles.brandLogoContainer, { flex: 0.4 }]}>
+                                    {/* Mostra o logo específico (ex: Boulevard ou Nightburnerz) */}
+                                    <Image source={selectDetails?.image || defaultCollection} style={styles.brandLogo} />
+                                </View>
+                            </View>
+                        )}
+                    </>
+                )}
+                <View style={[styles.row, { alignItems: 'center' }]}>
+                    <View style={{ flex: 3, marginRight: 10 }}>
                         <CustomDropdown
-                            placeholder="Série"
-                            data={SERIES}
-                            value={carro?.serieName || null}
-                            onChange={(val) => setCarro({ ...carro, serieName: val })}
+                            placeholder='Cor'
+                            data={SIMPLECOLOR}
+                            value={carro?.color || null}
+                            onChange={(val) => setCarro({ ...carro, color: val })}
                         />
                     </View>
-                    {/* Coluna do Logo ocupando 20% (flex: 1) */}
-                    <View style={[styles.brandLogoContainer, { flex: 0.4 }]}>
-                        <Image source={selectSeries?.image || defaultSeries} style={styles.brandLogo} />
+                    <View style={[styles.brandLogoContainer, {marginTop: -15}]}>
+                        <View style={{
+                            width: 30, // Um pouco menor que o container para ter respiro
+                            height: 30,
+                            borderRadius: 15, // Círculo fica mais bonito que quadrado para cor
+                            backgroundColor: carro?.color || '#222',
+                            borderWidth: 1,
+                            borderColor: '#444'
+                        }} />
                     </View>
                 </View>
                 <View style={styles.row}>
@@ -236,7 +307,8 @@ export default function AddScreen() {
                         <Input
                             label="Código SKU"
                             value={carro?.code}
-                            onChangeText={(val) => setCarro({ ...carro, code: val })}
+                            onChangeText={(val) => setCarro({ ...carro, code: val.toUpperCase() })}
+                            autoCapitalize='characters'
                         />
                     </View>
                     <View style={{ flex: 1 }}>
@@ -295,7 +367,9 @@ export default function AddScreen() {
                         onChange={(v) => setCarro({ ...carro, isCustom: v })}
                     />
                     <RarityCheckbox
-                        label="T-Hunt?"
+                        label={carro?.rarity === 'super' ?
+                            'Super TH' : carro?.rarity === 'regular' ?
+                                'TH Regular' : "T-Hunt?"}
                         value={carro?.rarity || 'normal'}
                         onChange={(val) => setCarro({ ...carro, rarity: val })}
                     />
@@ -303,6 +377,11 @@ export default function AddScreen() {
                         label="Pneu de borracha"
                         value={!!carro?.hasRubberTires}
                         onChange={(v) => setCarro({ ...carro, hasRubberTires: v })}
+                    />
+                    <Checkbox
+                        label="ID"
+                        value={!!carro?.isID}
+                        onChange={(v) => setCarro({ ...carro, isID: v })}
                     />
                     <Checkbox
                         label="À venda"
