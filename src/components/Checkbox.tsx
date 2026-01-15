@@ -6,16 +6,19 @@ interface CheckboxProps {
     label: string;
     value: boolean;
     onChange: (newValue: boolean) => void;
+    icon?: keyof typeof Ionicons.glyphMap;
+    activeColor?: string;
 }
 
-export const Checkbox = ({ label, value, onChange }: CheckboxProps) => (
+export const Checkbox = ({ label, value, icon = "checkmark", activeColor = "#E31C1C", onChange }: CheckboxProps) => (
     <TouchableOpacity
         style={styles.container}
         onPress={() => onChange(!value)}
         activeOpacity={0.8}
     >
-        <View style={[styles.box, value && styles.boxChecked]}>
-            {value && <Ionicons name="checkmark" size={16} color="white" />}
+        <View style={[styles.box, value &&
+            { backgroundColor: activeColor, borderColor: activeColor }]}>
+            {value && <Ionicons name={icon} size={16} color="white" />}
         </View>
         <Text style={styles.label}>{label}</Text>
     </TouchableOpacity>
@@ -37,10 +40,6 @@ const styles = StyleSheet.create({
         marginRight: 10,
         justifyContent: 'center',
         alignItems: 'center'
-    },
-    boxChecked: {
-        backgroundColor: '#E31C1C',
-        borderColor: '#E31C1C'
     },
     label: { color: '#fff', fontSize: 14 }
 });

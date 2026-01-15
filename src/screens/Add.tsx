@@ -245,7 +245,7 @@ export default function AddScreen() {
                 </View>
 
                 {/* SÉRIE DO BRINQUEDO (Boulevard, Car Culture, Mainline, etc) */}
-                {carro?.brand === 'hot-wheels' && (
+                {carro?.brand === 'hotwheels' && (
                     <>
                         {/* DROPDOWN 1: TIPO (Mainline ou Premium) */}
                         <View style={styles.row}>
@@ -377,6 +377,11 @@ export default function AddScreen() {
                         label="Pneu de borracha"
                         value={!!carro?.hasRubberTires}
                         onChange={(v) => setCarro({ ...carro, hasRubberTires: v })}
+                    />
+                    <Checkbox
+                        label="Zamac"
+                        value={!!carro?.isZamac}
+                        onChange={(v) => setCarro({ ...carro, isZamac: v })}
                     />
                     <Checkbox
                         label="ID"

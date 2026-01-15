@@ -22,6 +22,7 @@ export interface Carro {
     rarity: 'normal' | 'regular' | 'super';
     hasRubberTires: boolean;
     isID: boolean;
+    isZamac: boolean;
     
     // Preços
     isForSale: boolean;

@@ -10,12 +10,12 @@ export interface ListItem {
 
 export const MARCAS: ListItem[] = [
     { label: 'Greenlight', value: 'greenlight', image: require('@/assets/brands/greenlight.png') },
-    { label: 'Hot Wheels', value: 'hot-wheels', image: require('@/assets/brands/hot-wheels.png') },
+    { label: 'Hot Wheels', value: 'hotwheels', image: require('@/assets/brands/hotwheels.png') },
     { label: 'Jada', value: 'jada', image: require('@/assets/brands/jada.png') },
-    { label: 'Johnny Lightning', value: 'johnny-lightning', image: require('@/assets/brands/johnny-lightning.png') },
+    { label: 'Johnny Lightning', value: 'johnnylightning', image: require('@/assets/brands/johnnylightning.png') },
     { label: 'Kyosho', value: 'kyosho', image: require('@/assets/brands/kyosho.png') },
     { label: 'Maisto', value: 'maisto', image: require('@/assets/brands/maisto.png') },
-    { label: 'M2 Machines', value: 'm2-machines', image: require('@/assets/brands/m2-machines.png') },
+    { label: 'M2 Machines', value: 'm2machines', image: require('@/assets/brands/m2machines.png') },
     { label: 'Matchbox', value: 'matchbox', image: require('@/assets/brands/matchbox.png') },
 ];
 
@@ -98,11 +98,12 @@ export const PAISES: ListItem[] = [
 ];
 
 export const COLECOES: ListItem[] = [
+    { label: 'Art Cars', value: 'artcars', image: require('@/assets/collections/artcars.png') },
     { label: 'Exotics', value: 'exotics', image: require('@/assets/collections/exotics.png') },
     { label: 'Factory Fresh', value: 'factoryfresh', image: require('@/assets/collections/factoryfresh.png') },
-    { label: 'Fast Foodie', value: 'fast-foodie', image: require('@/assets/collections/fast-foodie.png') },
+    { label: 'Fast Foodie', value: 'fastfoodie', image: require('@/assets/collections/fastfoodie.png') },
     { label: 'Green Speed', value: 'greenspeed', image: require('@/assets/collections/greenspeed.png') },
-    { label: 'J-Imports', value: 'j-imports', image: require('@/assets/collections/j-imports.png') },
+    { label: 'J-Imports', value: 'jimports', image: require('@/assets/collections/jimports.png') },
     { label: 'ID', value: 'id', image: require('@/assets/collections/id.png') },
     { label: 'Muscle Mania', value: 'musclemania', image: require('@/assets/collections/musclemania.png') },
     { label: 'Nightburnerz', value: 'nightburnerz', image: require('@/assets/collections/nightburnerz.png') },
@@ -114,10 +115,10 @@ export const COLECOES: ListItem[] = [
 
 export const PREMIUM: ListItem[] = [
     { label: 'Boulevard', value: 'boulevard', image: require('@/assets/premium/boulevard.png') },
-    { label: 'Car Culture', value: 'car-culture', image: require('@/assets/premium/car-culture.png') },
+    { label: 'Car Culture', value: 'carculture', image: require('@/assets/premium/carculture.png') },
     { label: 'Elite 64', value: 'elite64', image: require('@/assets/premium/elite64.png') },
     { label: 'ID', value: 'id', image: require('@/assets/collections/id.png') },
-    { label: 'Pop Culture', value: 'pop-culture', image: require('@/assets/premium/pop-culture.png') },
+    { label: 'Pop Culture', value: 'popculture', image: require('@/assets/premium/popculture.png') },
     { label: 'RLC', value: 'rlc', image: require('@/assets/premium/rlc.png') },
 ];
 export const SERIES: ListItem[] = [
