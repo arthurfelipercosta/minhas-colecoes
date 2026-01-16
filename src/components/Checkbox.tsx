@@ -8,9 +8,10 @@ interface CheckboxProps {
     onChange: (newValue: boolean) => void;
     icon?: keyof typeof Ionicons.glyphMap;
     activeColor?: string;
+    iconColor?: string;
 }
 
-export const Checkbox = ({ label, value, icon = "checkmark", activeColor = "#E31C1C", onChange }: CheckboxProps) => (
+export const Checkbox = ({ label, value, icon = "checkmark", activeColor = "#E31C1C", iconColor = "white", onChange }: CheckboxProps) => (
     <TouchableOpacity
         style={styles.container}
         onPress={() => onChange(!value)}
@@ -18,7 +19,7 @@ export const Checkbox = ({ label, value, icon = "checkmark", activeColor = "#E31
     >
         <View style={[styles.box, value &&
             { backgroundColor: activeColor, borderColor: activeColor }]}>
-            {value && <Ionicons name={icon} size={16} color="white" />}
+            {value && <Ionicons name={icon} size={16} color={iconColor} />}
         </View>
         <Text style={styles.label}>{label}</Text>
     </TouchableOpacity>

@@ -102,6 +102,7 @@ export const COLECOES: ListItem[] = [
     { label: 'Exotics', value: 'exotics', image: require('@/assets/collections/exotics.png') },
     { label: 'Factory Fresh', value: 'factoryfresh', image: require('@/assets/collections/factoryfresh.png') },
     { label: 'Fast Foodie', value: 'fastfoodie', image: require('@/assets/collections/fastfoodie.png') },
+    { label: 'Ferrari', value: 'ferrari', image: require('@/assets/collections/ferrari.png') },
     { label: 'Green Speed', value: 'greenspeed', image: require('@/assets/collections/greenspeed.png') },
     { label: 'J-Imports', value: 'jimports', image: require('@/assets/collections/jimports.png') },
     { label: 'ID', value: 'id', image: require('@/assets/collections/id.png') },

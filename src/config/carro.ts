@@ -23,6 +23,9 @@ export interface Carro {
     hasRubberTires: boolean;
     isID: boolean;
     isZamac: boolean;
+    isRedLine: boolean;
+    isMM: boolean;
+    isSpeed: boolean;
     
     // Preços
     isForSale: boolean;
